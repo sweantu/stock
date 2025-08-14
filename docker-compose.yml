@@ -1,0 +1,56 @@
+services:
+  backend:
+    build: ./backend
+    restart: always
+    env_file: ./backend/.env
+    volumes:
+      - ./backend:/app
+      - ./uploads:/uploads
+      - ./logs:/logs
+    ports:
+      - "8000:5888"
+    networks:
+      - stock_net
+    depends_on:
+      - postgres
+
+  postgres:
+    image: postgres:16-alpine
+    restart: always
+    env_file: ./backend/.env
+    ports:
+      - "5433:5432"
+    networks:
+      - stock_net
+    volumes:
+      - stock_postgres:/var/lib/postgresql/data
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "5173:5173"
+    networks:
+      - stock_net
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    depends_on:
+      - backend
+  
+  nginx:
+    image: nginx:1.26-alpine
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx:/etc/nginx/conf.d:ro
+      - ./uploads:/uploads
+    networks:
+      - stock_net
+    depends_on:
+      - backend
+
+volumes:
+  stock_postgres:
+
+networks:
+  stock_net:
