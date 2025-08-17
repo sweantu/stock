@@ -13,8 +13,7 @@ class User(Base):
         UUID(as_uuid=True),
         primary_key=True,
         default=uuid.uuid4,
-        unique=True,
         nullable=False,
     )
-    name = Column(String, index=True)
-    email = Column(String, unique=True, index=True)
+    name = Column(String(100), index=True)
+    email = Column(String(255), unique=True, index=True)

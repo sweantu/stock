@@ -11,8 +11,8 @@ def read_root():
     return {"message": "Hello FastAPI 🚀"}
 
 @app.get("/health")
-def health_check():
-    return health_check_db()
+async def health_check():
+    return await health_check_db()
 
 
 app.include_router(user_router, prefix="/users", tags=["users"])
