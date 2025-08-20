@@ -2,11 +2,11 @@
 typeCheckingMode = "standard"
 include = ["app"]
 exclude = ["**/__pycache__", "venv", ".venv"]
-pythonVersion = "3.12"
+pythonVersion = "3.11"
 
 [tool.ruff]
 line-length = 88
-target-version = "py312"
+target-version = "py311"
 fix = true
 unsafe-fixes = true
 extend-exclude = ["__pycache__", "migrations"]
