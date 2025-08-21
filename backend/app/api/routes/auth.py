@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 
-from app.api.schemas.auth import AuthResponse, Login
+from app.api.schemas.auth import AuthResponse, Login, Register
 from app.api.schemas.user import UserResponse, UserUpdate, UserUpdatePassword
 from app.core.auth import AuthPayloadDep
 from app.database.models.user import Role
@@ -19,6 +19,14 @@ async def login(
     result = await auth_service.login(email=login.email, password=login.password)
     validate_role_access(roles=[Role.USER], user_role=result.user.role)
     return result
+
+@router.post("/register")
+async def register(
+    register: Register,
+    auth_service: AuthServiceDep,
+):
+    await auth_service.register(register=register)
+    return {"message": "User registered successfully"}
 
 
 @router.get("/me", response_model=UserResponse)
