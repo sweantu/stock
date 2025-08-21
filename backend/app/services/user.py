@@ -26,7 +26,12 @@ class UserService:
         user_by_email = await self.user_repository.get_by_email(user_create.email)
         if user_by_email:
             raise HTTPException(status_code=400, detail="Email already registered")
-        id = await self.user_repository.create(user_create)
+        id = await self.user_repository.create(
+            name=user_create.name,
+            email=user_create.email,
+            password=user_create.password,
+            role=user_create.role,
+        )
         await self.db.commit()
         return id
 

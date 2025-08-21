@@ -6,7 +6,7 @@ from sqlalchemy import func, insert, update
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 
-from app.api.schemas.user import UserCreate, UserUpdate
+from app.api.schemas.user import UserUpdate
 from app.core.paging import Paging
 from app.core.password import hash_password
 from app.database.models.user import Role, User, UserFilter
@@ -16,14 +16,16 @@ class UserRepository:
     def __init__(self, db: AsyncSession):
         self.db = db
 
-    async def create(self, user_create: UserCreate) -> uuid.UUID:
+    async def create(
+        self, name: str, email: str, password: str, role: Role
+    ) -> uuid.UUID:
         stmt = (
             insert(User)
             .values(
-                name=user_create.name,
-                email=user_create.email,
-                password=hash_password(user_create.password),
-                role=user_create.role,
+                name=name,
+                email=email,
+                password=hash_password(password),
+                role=role,
             )
             .returning(User.id)
         )
