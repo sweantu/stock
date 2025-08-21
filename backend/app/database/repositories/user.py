@@ -2,7 +2,7 @@ import uuid
 from datetime import UTC, datetime
 
 from fastapi import HTTPException
-from sqlalchemy import func
+from sqlalchemy import func, insert, update
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 
@@ -16,28 +16,32 @@ class UserRepository:
     def __init__(self, db: AsyncSession):
         self.db = db
 
-    async def create(self, user_create: UserCreate) -> User:
-        user = User(
-            name=user_create.name,
-            email=user_create.email,
-            password=hash_password(user_create.password),
-            role=user_create.role,
+    async def create(self, user_create: UserCreate) -> uuid.UUID:
+        stmt = (
+            insert(User)
+            .values(
+                name=user_create.name,
+                email=user_create.email,
+                password=hash_password(user_create.password),
+                role=user_create.role,
+            )
+            .returning(User.id)
         )
-        self.db.add(user)
-        await self.db.flush()  # Ensure the user is created and has an ID
-        await self.db.refresh(user)  # Refresh to get the latest state
-        return user
+        result = await self.db.execute(stmt)
+        return result.scalar_one()
 
     async def get(self, user_id: uuid.UUID) -> User:
-        result = await self.db.execute(select(User).where(User.id == user_id))
-        user = result.scalars().first()
+        stmt = select(User).where(User.id == user_id)
+        result = await self.db.execute(stmt)
+        user = result.scalar_one_or_none()
         if user is None:
             raise HTTPException(status_code=404, detail="User not found")
         return user
 
     async def get_by_email(self, email: str) -> User | None:
-        result = await self.db.execute(select(User).where(User.email == email))
-        return result.scalars().first()
+        stmt = select(User).where(User.email == email)
+        result = await self.db.execute(stmt)
+        return result.scalar_one_or_none()
 
     async def get_many(self, paging: Paging, filter: UserFilter) -> list[User]:
         stmt = select(User)
@@ -49,44 +53,55 @@ class UserRepository:
     async def count(self, filter: UserFilter) -> int:
         stmt = select(func.count()).select_from(User)
         stmt = filter.apply(stmt)
-        count = await self.db.scalar(stmt)
-        return count or 0
+        result = await self.db.execute(stmt)
+        return result.scalar_one()
 
-    async def update(self, user_id: uuid.UUID, user_update: UserUpdate) -> User:
-        user = await self.get(user_id)
-        user.name = user_update.name
-        await self.db.flush()
-        await self.db.refresh(user)
-        return user
+    async def update(self, user_id: uuid.UUID, user_update: UserUpdate) -> None:
+        stmt = (
+            update(User)
+            .where(User.id == user_id)
+            .values(
+                name=user_update.name,
+            )
+        )
+        await self.db.execute(stmt)
 
-    async def update_password(self, user_id: uuid.UUID, password: str) -> User:
-        user = await self.get(user_id)
-        user.password = hash_password(password)
-        await self.db.flush()
-        await self.db.refresh(user)
-        return user
+    async def update_password(self, user_id: uuid.UUID, password: str) -> None:
+        stmt = (
+            update(User)
+            .where(User.id == user_id)
+            .values(
+                password=hash_password(password),
+            )
+        )
+        await self.db.execute(stmt)
 
-    async def update_role(self, user_id: uuid.UUID, role: Role) -> User:
-        user = await self.get(user_id)
-        user.role = role
-        await self.db.flush()
-        await self.db.refresh(user)
-        return user
+    async def update_role(self, user_id: uuid.UUID, role: Role) -> None:
+        stmt = (
+            update(User)
+            .where(User.id == user_id)
+            .values(
+                role=role,
+            )
+        )
+        await self.db.execute(stmt)
 
-    async def deactivate(self, user_id: uuid.UUID) -> User:
-        user = await self.get(user_id)
-        if user.deleted_at is not None:
-            raise HTTPException(status_code=400, detail="User already deactivated")
-        user.deleted_at = datetime.now(UTC)
-        await self.db.flush()
-        await self.db.refresh(user)
-        return user
+    async def deactivate(self, user_id: uuid.UUID) -> None:
+        stmt = (
+            update(User)
+            .where(User.id == user_id)
+            .values(
+                deleted_at=datetime.now(UTC),
+            )
+        )
+        await self.db.execute(stmt)
 
-    async def reactivate(self, user_id: uuid.UUID) -> User:
-        user = await self.get(user_id)
-        if user.deleted_at is None:
-            raise HTTPException(status_code=400, detail="User already reactivated")
-        user.deleted_at = None
-        await self.db.flush()
-        await self.db.refresh(user)
-        return user
+    async def reactivate(self, user_id: uuid.UUID) -> None:
+        stmt = (
+            update(User)
+            .where(User.id == user_id)
+            .values(
+                deleted_at=None,
+            )
+        )
+        await self.db.execute(stmt)

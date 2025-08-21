@@ -3,7 +3,7 @@ from datetime import datetime
 from enum import Enum
 
 from pydantic import BaseModel
-from sqlalchemy import DateTime, Select, String, func, or_
+from sqlalchemy import DateTime, Select, String, func, or_, text
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column
 
@@ -19,7 +19,9 @@ class User(Base):
     __tablename__ = "users"
 
     id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+        UUID(as_uuid=True),
+        primary_key=True,
+        server_default=text("gen_random_uuid()"),
     )
     name: Mapped[str] = mapped_column(String(100), index=True)
     email: Mapped[str] = mapped_column(String(255), unique=True)
