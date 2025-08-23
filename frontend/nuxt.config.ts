@@ -1,6 +1,6 @@
 export default defineNuxtConfig({
-  modules: ["@nuxt/ui"],
-  css: ["~/assets/css/main.css"],
+  modules: ['@nuxt/ui', '@pinia/nuxt'],
+  css: ['~/assets/css/main.css'],
 
-  compatibilityDate: "2025-08-23",
-});
+  compatibilityDate: '2025-08-23',
+})

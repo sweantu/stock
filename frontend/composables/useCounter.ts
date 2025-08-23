@@ -1,5 +1,4 @@
 import { storeToRefs } from 'pinia'
-import { useCounterStore } from '~/stores/counter'
 
 export function useCounter() {
   const counterStore = useCounterStore()
