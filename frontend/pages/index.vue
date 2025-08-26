@@ -1,5 +1,6 @@
 <!-- pages/index.vue -->
 <script setup lang="ts">
+import type { TableColumn } from '@nuxt/ui'
 const userComposable = useUser()
 
 const newUser = reactive({
@@ -17,6 +18,28 @@ const create = async () => {
 onMounted(() => {
     userComposable.getMany()
 })
+
+const columns: TableColumn<User>[] = [
+    {
+        accessorKey: 'id',
+        header: '#'
+
+    },
+    {
+        accessorKey: 'name',
+        header: 'Name',
+        cell: ({ row }) => `@@${row.getValue('name')}`
+    },
+    {
+        accessorKey: 'email',
+        header: 'Email',
+    },
+    {
+        accessorKey: 'role',
+        header: 'Role',
+    },
+]
+
 </script>
 
 <template>
@@ -34,11 +57,7 @@ onMounted(() => {
 
     <div>
         <h2 class="text-xl font-bold mb-2">Users</h2>
-        <ul>
-            <li v-for="user in userComposable.users.value" :key="user.id">
-                {{ user.name }} - {{ user.email }} ({{ user.role }})
-            </li>
-        </ul>
+        <UTable :data="userComposable.users.value" :columns="columns" class="flex-1" />
         <p>Total: {{ userComposable.total.value }}</p>
     </div>
 </template>
