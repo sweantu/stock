@@ -25,10 +25,10 @@ export const useUserStore = defineStore('user', () => {
   const total = ref(0)
   const page = ref(1)
   const page_size = ref(10)
-  const sort = ref('desc')
+  const sort = ref<'asc' | 'desc'>('desc')
 
   const create = async (payload: CreateUserPayload) => {
-    await $api<User>('/admin/users/', {
+    return await $api<User>('/admin/users/', {
       method: 'POST',
       body: payload,
     })
@@ -42,14 +42,13 @@ export const useUserStore = defineStore('user', () => {
     total.value = data.total
     page.value = data.page
     page_size.value = data.page_size
+    return data
   }
 
-  return {
-    users,
-    total,
-    page,
-    page_size,
-    create,
-    getMany,
+  const setPage = async (p: number) => {
+    page.value = p
+    await getMany()
   }
+
+  return { users, total, page, page_size, sort, create, getMany, setPage }
 })

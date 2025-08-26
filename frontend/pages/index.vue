@@ -1,19 +1,17 @@
-
+<!-- pages/index.vue -->
 <script setup lang="ts">
 const userComposable = useUser()
+
 const newUser = reactive({
     name: '',
     email: '',
     password: '',
     role: '',
 })
+
 const create = async () => {
     await userComposable.create(newUser)
-    await userComposable.getMany()
-    newUser.name = ''
-    newUser.email = ''
-    newUser.password = ''
-    newUser.role = ''
+    Object.assign(newUser, { name: '', email: '', password: '', role: '' })
 }
 
 onMounted(() => {
@@ -23,13 +21,17 @@ onMounted(() => {
 
 <template>
     <div>
-        Add user
-        <input type="text" v-model="newUser.name" placeholder="Name">
-        <input type="text" v-model="newUser.email" placeholder="Email">
-        <input type="password" v-model="newUser.password" placeholder="Password">
-        <input type="text" v-model="newUser.role" placeholder="Role">
-        <button @click="create">Create</button>
+        <h2>Add user</h2>
+        <input v-model="newUser.name" placeholder="Name" />
+        <input type="email" v-model="newUser.email" placeholder="Email" />
+        <input type="password" v-model="newUser.password" placeholder="Password" />
+        <input v-model="newUser.role" placeholder="Role" />
+        <button :disabled="userComposable.loading.value" @click="create">
+            {{ userComposable.loading.value ? 'Creating...' : 'Create' }}
+        </button>
+        <p v-if="userComposable.error" class="text-red-500">{{ userComposable.error }}</p>
     </div>
+
     <div>
         <h2 class="text-xl font-bold mb-2">Users</h2>
         <ul>
@@ -37,7 +39,6 @@ onMounted(() => {
                 {{ user.name }} - {{ user.email }} ({{ user.role }})
             </li>
         </ul>
-
         <p>Total: {{ userComposable.total.value }}</p>
     </div>
 </template>
