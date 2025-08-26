@@ -25,17 +25,17 @@ services:
     volumes:
       - stock_postgres:/var/lib/postgresql/data
 
-  frontend:
-    build: ./frontend
-    networks:
-      - stock_net
-    ports:
-      - "3000:3000"
-    volumes:
-      - ./frontend:/app
-      - /app/node_modules
-    depends_on:
-      - backend
+  # nuxt:
+  #   build: ./nuxt
+  #   networks:
+  #     - stock_net
+  #   ports:
+  #     - "3000:3000"
+  #   volumes:
+  #     - ./nuxt:/app
+  #     - /app/node_modules
+  #   depends_on:
+  #     - backend
   
   # nginx:
   #   image: nginx:1.26-alpine
