@@ -1,14 +1,27 @@
-<script setup></script>
+<script setup>
+import { onMounted } from "vue";
+import { useUser } from "@/composables/useUser";
+
+const { users, fetchUsers, addUser } = useUser();
+
+onMounted(() => {
+  fetchUsers();
+});
+
+const newUser = { name: "Alice", email: "alice@example.com", role: "admin", password: "123456" };
+
+const handleAddUser = () => {
+  addUser(newUser);
+};
+</script>
 
 <template>
-  <h1>You did it!</h1>
-  <p>
-    Visit <a href="https://vuejs.org/" target="_blank" rel="noopener">vuejs.org</a> to read the
-    documentation
-  </p>
-  <h1 class="text-3xl font-bold underline">
-    Hello world!
-  </h1>
+  <div>
+    <h2>User List</h2>
+    <ul>
+      <li v-for="u in users" :key="u.id">{{ u.name }} {{ u.email }} ({{ u.role }}) </li>
+    </ul>
+    <button @click="handleAddUser">Add User</button>
+  </div>
 </template>
 
-<style scoped></style>
