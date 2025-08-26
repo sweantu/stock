@@ -24,6 +24,18 @@ services:
       - stock_net
     volumes:
       - stock_postgres:/var/lib/postgresql/data
+  
+  frontend:
+    build: ./frontend
+    volumes:
+      - ./frontend:/app         # sync code changes
+      - /app/node_modules       # prevent overwriting node_modules
+    ports:
+      - "5173:5173"
+    networks:
+      - stock_net
+    depends_on:
+      - backend
 
   # nuxt:
   #   build: ./nuxt
@@ -37,17 +49,17 @@ services:
   #   depends_on:
   #     - backend
   
-  # nginx:
-  #   image: nginx:1.26-alpine
-  #   ports:
-  #     - "80:80"
-  #   volumes:
-  #     - ./nginx:/etc/nginx/conf.d:ro
-  #     - ./uploads:/uploads
-  #   networks:
-  #     - stock_net
-  #   depends_on:
-  #     - frontend
+  nginx:
+    image: nginx:1.26-alpine
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx:/etc/nginx/conf.d:ro
+      - ./uploads:/uploads
+    networks:
+      - stock_net
+    depends_on:
+      - frontend
 
 volumes:
   stock_postgres:
