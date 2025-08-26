@@ -9,7 +9,6 @@ from app.api.schemas.user import (
     UserUpdatePassword,
     UserUpdateRole,
 )
-from app.core.auth import AdminAuthPayloadDep
 from app.core.paging import PagingDep, PagingResponse
 from app.database.models.user import Role, UserFilter
 from app.services.user import UserServiceDep
@@ -18,21 +17,18 @@ router = APIRouter()
 
 
 @router.post("/", response_model=UserResponse)
-async def create(
-    _: AdminAuthPayloadDep, user_create: UserCreate, user_service: UserServiceDep
-):
+async def create(user_create: UserCreate, user_service: UserServiceDep):
     id = await user_service.create(user_create)
     return await user_service.get(user_id=id)
 
 
 @router.get("/{user_id}", response_model=UserResponse)
-async def get(_: AdminAuthPayloadDep, user_id: UUID4, user_service: UserServiceDep):
+async def get(user_id: UUID4, user_service: UserServiceDep):
     return await user_service.get(user_id)
 
 
 @router.get("/", response_model=PagingResponse[UserResponse])
 async def get_many(
-    _: AdminAuthPayloadDep,
     user_service: UserServiceDep,
     paging: PagingDep,
     search_text: str = Query(None),
@@ -49,7 +45,6 @@ async def get_many(
 
 @router.put("/{user_id}/password", response_model=UserResponse)
 async def update_password(
-    _: AdminAuthPayloadDep,
     user_id: UUID4,
     user_update_password: UserUpdatePassword,
     user_service: UserServiceDep,
@@ -60,7 +55,6 @@ async def update_password(
 
 @router.put("/{user_id}/role", response_model=UserResponse)
 async def update_role(
-    _: AdminAuthPayloadDep,
     user_id: UUID4,
     user_update_role: UserUpdateRole,
     user_service: UserServiceDep,
@@ -70,16 +64,12 @@ async def update_role(
 
 
 @router.put("/{user_id}/deactivate", response_model=UserResponse)
-async def deactivate(
-    _: AdminAuthPayloadDep, user_id: UUID4, user_service: UserServiceDep
-):
+async def deactivate(user_id: UUID4, user_service: UserServiceDep):
     await user_service.deactivate(user_id)
     return await user_service.get(user_id=user_id)
 
 
 @router.put("/{user_id}/reactivate", response_model=UserResponse)
-async def reactivate(
-    _: AdminAuthPayloadDep, user_id: UUID4, user_service: UserServiceDep
-):
+async def reactivate(user_id: UUID4, user_service: UserServiceDep):
     await user_service.reactivate(user_id)
     return await user_service.get(user_id=user_id)
