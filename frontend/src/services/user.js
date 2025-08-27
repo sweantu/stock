@@ -1,5 +1,7 @@
 // services/user.js
 import api from './api'
 
-export const getUsers = () => api.get('/admin/users')
-export const createUser = (data) => api.post('/admin/users', data)
+const getMany = () => api.get('/admin/users')
+const create = (data) => api.post('/admin/users', data)
+
+export { getMany, create }

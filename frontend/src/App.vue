@@ -2,16 +2,16 @@
 import { onMounted } from "vue";
 import { useUser } from "@/composables/useUser";
 
-const { users, fetchUsers, addUser } = useUser();
+const userCompo = useUser();
 
 onMounted(() => {
-  fetchUsers();
+  userCompo.getMany();
 });
 
-const newUser = { name: "Alice", email: "alice@example.com", role: "admin", password: "123456" };
+const newUser = { name: "Alice3", email: "alice3@example.com", role: "admin", password: "123456" };
 
 const handleAddUser = () => {
-  addUser(newUser);
+  userCompo.create(newUser);
 };
 </script>
 
@@ -19,7 +19,7 @@ const handleAddUser = () => {
   <div>
     <h2>User List</h2>
     <ul>
-      <li v-for="u in users" :key="u.id">{{ u.name }} {{ u.email }} ({{ u.role }}) </li>
+      <li v-for="u in userCompo.users.value" :key="u.id">{{ u.name }} {{ u.email }} ({{ u.role }}) </li>
     </ul>
     <button @click="handleAddUser">Add User</button>
   </div>

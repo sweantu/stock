@@ -1,19 +1,13 @@
 // composables/useUser.js
-import { ref } from 'vue'
-import { getUsers, createUser } from '@/services/user'
+import { useUserStore } from '@/stores/user'
+import { storeToRefs } from 'pinia'
 
 export function useUser() {
-  const users = ref([])
+  const userStore = useUserStore()
 
-  const fetchUsers = async () => {
-    const { data } = await getUsers()
-    users.value = data.items
-  }
+  const { users } = storeToRefs(userStore)
 
-  const addUser = async (newUser) => {
-    await createUser(newUser)
-    await fetchUsers()
-  }
+  const { getMany, create } = userStore
 
-  return { users, fetchUsers, addUser }
+  return { users, getMany, create }
 }
