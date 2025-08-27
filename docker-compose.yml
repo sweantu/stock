@@ -37,17 +37,17 @@ services:
     depends_on:
       - backend
   
-  nginx:
-    image: nginx:1.26-alpine
-    ports:
-      - "80:80"
-    volumes:
-      - ./nginx:/etc/nginx/conf.d:ro
-      - ./uploads:/uploads
-    networks:
-      - stock_net
-    depends_on:
-      - frontend
+  # nginx:
+  #   image: nginx:1.26-alpine
+  #   ports:
+  #     - "80:80"
+  #   volumes:
+  #     - ./nginx:/etc/nginx/conf.d:ro
+  #     - ./uploads:/uploads
+  #   networks:
+  #     - stock_net
+  #   depends_on:
+  #     - frontend
 
 volumes:
   stock_postgres:
