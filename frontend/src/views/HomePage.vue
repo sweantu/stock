@@ -2,6 +2,7 @@
 import { useCounter } from '@/composables/useCounter';
 
 const { count, increment } = useCounter();
+console.log('HomePage component loaded');
 </script>
 
 <template>
