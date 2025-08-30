@@ -1,27 +1,11 @@
-<script setup>
-import { onMounted } from "vue";
-import { useUser } from "@/composables/useUser";
-
-const userCompo = useUser();
-
-onMounted(() => {
-  userCompo.getMany();
-});
-
-const newUser = { name: "Alice3", email: "alice3@example.com", role: "admin", password: "123456" };
-
-const handleAddUser = () => {
-  userCompo.create(newUser);
-};
-</script>
+<script setup lang="ts"></script>
 
 <template>
-  <div>
-    <h2>User List</h2>
-    <ul>
-      <li v-for="u in userCompo.users.value" :key="u.id">{{ u.name }} {{ u.email }} ({{ u.role }}) </li>
-    </ul>
-    <button @click="handleAddUser">Add User</button>
-  </div>
+  <h1 class="text-3xl font-bold underline text-blue-500">You did it!</h1>
+  <p>
+    Visit <a href="https://vuejs.org/" target="_blank" rel="noopener">vuejs.org</a> to read the
+    documentation
+  </p>
 </template>
 
+<style scoped></style>
