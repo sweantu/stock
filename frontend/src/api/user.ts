@@ -29,13 +29,13 @@ export interface CreateUserData {
 
 // Type the getMany function
 export const getMany = async (): Promise<PaginatedUsersResponse> => {
-  const { data } = await apiClient.get<PaginatedUsersResponse>('/admin/users')
+  const { data } = await apiClient.get<PaginatedUsersResponse>('/admin/users/')
   return data
 }
 
 // Type the create function
 export const create = async (data: CreateUserData): Promise<User> => {
-  const { data: responseData } = await apiClient.post<User>('/admin/users', data)
+  const { data: responseData } = await apiClient.post<User>('/admin/users/', data)
   return responseData
 }
 

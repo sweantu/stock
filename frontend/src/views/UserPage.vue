@@ -13,7 +13,7 @@ const newUser = ref<CreateUserData>({
 
 // Fetch users on component mount
 
-userStore.getMany();
+userStore.fetch();
 console.log('UserPage component loaded');
 
 // Handle form submission to create a new user

@@ -1,7 +1,10 @@
 <script setup lang="ts">
 import { useCounter } from '@/composables/useCounter';
+import { useUserStore } from '@/stores/user';
 
 const { count, increment } = useCounter();
+const userStore = useUserStore();
+
 console.log('HomePage component loaded');
 </script>
 
@@ -12,4 +15,12 @@ console.log('HomePage component loaded');
     documentation
   </p>
   <button @click="increment">Count: {{ count }}</button>
+
+  <h2>User List</h2>
+  <div v-if="userStore.users.length === 0">No users found.</div>
+  <ul v-else>
+    <li v-for="user in userStore.users" :key="user.id">
+      <strong>{{ user.name }}</strong> ({{ user.email }}) - Role: {{ user.role }}
+    </li>
+  </ul>
 </template>
