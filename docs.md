@@ -35,3 +35,5 @@ docker exec -it stock-kafka-1 \
  --bootstrap-server localhost:9092 \
  --partitions 1 \
  --replication-factor 1
+
+kafka flink postgres elasticsearch kibana
